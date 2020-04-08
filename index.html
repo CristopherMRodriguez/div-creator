@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content=""/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <title>Atomic Div Creator</title>
+    <link rel="stylesheet" type="text/css" href="app.css"/>
+    
+  </head>
+
+  <body>
+    <!--Top Section of Page that will be used to activate the bottom section-->
+    <section class="top">
+      <button class="button">New Frame</button>
+    </section>
+
+    <!--Bottom Section of Page that will be used to activate the bottom section-->
+    <section class="bottom-section">
+      <div class="bottom">
+        <!--Hidden Box / new Custom Context Menu that will be called when right clicked.-->
+        <ul class='custom-menu'>
+          <li data-action="horz-equal">Horizontal: Divide equally</li>
+          <li data-action="horz-here">Horizontal: Divide here</li>
+          <li data-action="vert-equal">Vertical: Divide equally</li>
+          <li data-action="vert-here">Vertical: Divide here</li>
+        </ul>
+      </div>
+    </section>
+
+    <script>
+    // Button triggers the bottom section to change background color.
+    $(".button").click(function(){
+      $(".bottom-section").css("background-color", "#FFFFFF");
+    });
+
+    // Trigger action when the contexmenu is about to be shown
+    $(".bottom-section").bind("contextmenu", function (event) {
+      event.preventDefault();
+
+    /* stores y and x mouse coordinates globally so they can be accessed 
+    by other functions.*/
+
+      window.y = event.pageY;
+      window.x = event.pageX;
+      
+      // Show contextmenu
+      $(".custom-menu").finish().toggle(100).
+      
+      // In the right position (the mouse)
+      css({
+          top: y + "px",
+          left: x + "px"
+      });      
+
+    });
+
+
+    // If the document is clicked somewhere
+    $(document).bind("mousedown", function (e) {
+        
+        // And if the clicked element is not the menu
+        if (!$(e.target).parents(".custom-menu").length > 0) {
+            
+            // The menu will hide 
+            $(".custom-menu").hide(100);
+        }
+    });
+
+    // If the context menu element is clicked
+    $(".custom-menu li").click(function(){
+
+      // This is the triggered action name
+      switch($(this).attr("data-action")) {
+        
+        //A case for each action will be executed by specified function.
+        case "horz-equal": horzEqual(); break;
+        case "horz-here": horzHere(); break;
+        case "vert-equal": vertEqual(); break;
+        case "vert-here": vertHere(); break;
+
+      }
+      // function definition environment for each of the above cases
+      function horzEqual(){
+      // divides the div in half by top and bottom
+        $("div").append("<div></div>").append("<div></div>");
+        /*$("div").css({"height": "50%", "border-bottom": "var(--clr-dark) dotted 3px"});
+      */}
+
+      function horzHere(){
+        // result is the height of the top section
+        var result = $(".top").height();
+        /* divides the div in half by top and bottom where mouse was right clicked.
+        Also subtracts the top section height so it creates the div in the correct area */
+        $(".bottom").append("<div></div>").css({"height": y - result + "px", "border-bottom": "var(--clr-dark) dotted 3px"});    
+      };
+
+      function vertEqual(){
+        // divides the div in half by left and right
+        $(".bottom").append("<div></div>").css({"width": "50%", "border-right": "var(--clr-dark) dotted 3px"});    
+      };
+      
+      function vertHere(){
+      // divides the div in half by left and right where mouse was right clicked.
+        $(".bottom").append("<div></div>").css({"width": x + "px", "border-right": "var(--clr-dark) dotted 3px"});    
+      };
+
+      // Hide it AFTER the action was triggered
+    $(".custom-menu").hide(100);
+    });
+    
+    </script>
+
+  </body>
+
+</html>

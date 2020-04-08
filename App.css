@@ -1,0 +1,92 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    color: var(--clr-dark);
+    margin: 0;
+    font-family: var(--ff-primary);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+}
+
+:root {
+    --ff-primary: 'Roboto Condensed', sans-serif;
+    --ff-secondary: 'Oxanium', sans-serif;
+    
+    --fw-reg: 300;
+    --fw-bold: 900;
+    
+    --clr-light: #FFFFFF;
+    --clr-dark: #303030;
+    --clr-accent: #D3D3D3;
+    
+    --fs-h1: 3rem;
+    --fs-h2: 2.25rem;
+    --fs-h3: 1.25rem;
+    --fs-body: 1rem;
+    
+    --bs: 0.25em 0.25em 0.75em rgba(0,0,0,.25),
+          0.125em 0.125em 0.25em rgba(0,0,0,.15);
+}
+
+.top{
+	background-color: var(--clr-light);
+	height: 20vh;
+	display: flex;
+  	align-items: center;
+    justify-content: center;
+    border-bottom: 3px solid black;
+
+}
+
+.bottom-section{
+	background-color: var(--clr-accent);
+	height: 80vh;
+}
+
+.bottom{
+    height: 100%;
+}
+
+.button{
+    padding: 1em 2em;
+    background: gainsboro;
+    color: var(--clr-dark);
+    cursor: pointer;
+    font-size: 1.4rem;
+    letter-spacing: 5px;
+    font-weight: var(--fw-bold);
+    transition: transform 200ms ease-in-out;
+	border-radius: 100em;
+}
+
+/* The whole thing */
+.custom-menu {
+    display: none;
+    z-index: 1000;
+    position: absolute;
+    overflow: hidden;
+    border: 1px solid #CCC;
+    white-space: nowrap;
+    font-family: sans-serif;
+    background: #FFF;
+    color: #333;
+    border-radius: 5px;
+    padding: 0;
+}
+
+/* Each of the items in the list */
+.custom-menu li {
+    padding: 8px 12px;
+    cursor: pointer;
+    list-style-type: none;
+    transition: all .3s ease;
+    user-select: none;
+}
+
+.custom-menu li:hover {
+    background-color: #DEF;
+}
