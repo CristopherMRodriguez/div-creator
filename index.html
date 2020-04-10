@@ -3,24 +3,24 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content=""/>
+    <meta name="description" content="" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <title>Atomic Div Creator</title>
-    <link rel="stylesheet" type="text/css" href="app.css"/>
-    
+    <link rel="stylesheet" type="text/css" href="./app.css" />
   </head>
 
   <body>
-    <!--Top Section of Page that will be used to activate the bottom section-->
+    <!--Top Section of Page. Button changes background color of section, shows visibility of div, and activates all of the div's functionality.-->
     <section class="top">
-      <button class="button">New Frame</button>
+      <button class="button">New Frame</button><br/>
+      <p></p>
     </section>
 
-    <!--Bottom Section of Page that will be used to activate the bottom section-->
+    <!--Bottom Section of Page that contains the main div.-->
     <section class="bottom-section">
       <div class="bottom">
-        <!--Hidden Box / new Custom Context Menu that will be called when right clicked.-->
-        <ul class='custom-menu'>
+        <!--Custom Context Menu that will be called when right clicked.-->
+        <ul class="custom-menu">
           <li data-action="horz-equal">Horizontal: Divide equally</li>
           <li data-action="horz-here">Horizontal: Divide here</li>
           <li data-action="vert-equal">Vertical: Divide equally</li>
@@ -30,88 +30,134 @@
     </section>
 
     <script>
-    // Button triggers the bottom section to change background color.
-    $(".button").click(function(){
-      $(".bottom-section").css("background-color", "#FFFFFF");
-    });
+      
+      // Button triggers the bottom section to change background color, makes the main div visible.
+      $(".button").click(function() {
+        $(".bottom-section").css("background-color", "#FFFFFF");
+        $(".bottom").css("visibility", "visible");
+      });
 
-    // Trigger action when the contexmenu is about to be shown
-    $(".bottom-section").bind("contextmenu", function (event) {
-      event.preventDefault();
+      // Trigger action when the contexmenu is shown
+      $(".bottom").bind("contextmenu", function(event) {
+        window.activeElement = event.target;
+        // prevents default context menu
+        event.preventDefault();
 
-    /* stores y and x mouse coordinates globally so they can be accessed 
+        /* stores y and x mouse coordinates globally so they can be accessed 
     by other functions.*/
 
-      window.y = event.pageY;
-      window.x = event.pageX;
-      
-      // Show contextmenu
-      $(".custom-menu").finish().toggle(100).
-      
-      // In the right position (the mouse)
-      css({
-          top: y + "px",
-          left: x + "px"
-      });      
+        window.y = event.pageY;
+        window.x = event.pageX;
 
-    });
+        // Show contextmenu
+        $(".custom-menu")
+          .finish()
+          .toggle(100)
+          // shows it where mouse is located
+          .css({
+            top: y + "px",
+            left: x + "px"
+          });
+      });
 
-
-    // If the document is clicked somewhere
-    $(document).bind("mousedown", function (e) {
-        
+      // If the document is clicked somewhere 
+      $(document).bind("mousedown", function(e) {
         // And if the clicked element is not the menu
         if (!$(e.target).parents(".custom-menu").length > 0) {
-            
-            // The menu will hide 
-            $(".custom-menu").hide(100);
+          // The menu will hide
+          $(".custom-menu").hide(100);
         }
-    });
+      });
 
-    // If the context menu element is clicked
-    $(".custom-menu li").click(function(){
+      // If the context menu element is clicked
+      $(".custom-menu li").click(function() {
+        // There are multiple options
+        switch ($(this).attr("data-action")) {
+          //A case for each action will be executed by the specified function.
+          case "horz-equal":
+            horzEqual();
+            break;
+          case "horz-here":
+            horzHere();
+            break;
+          case "vert-equal":
+            vertEqual();
+            break;
+          case "vert-here":
+            vertHere();
+            break;
+        }
+        // function definition environment for each of the above cases / menu options.
+        function horzEqual() {
+          // This is the active element of the right click (needed before the menu option was selected).
+          let el = window.activeElement;
+          // Creates 2 div's with full width, making it equal.  Outline is there to make border visible.
+          $(el).append("<div style='width:100%; height:50%; outline: 1px solid red;'>");
+          $(el).append("<div style='width:100%; height:50%; outline: 1px solid red;'>");
+        }
 
-      // This is the triggered action name
-      switch($(this).attr("data-action")) {
-        
-        //A case for each action will be executed by specified function.
-        case "horz-equal": horzEqual(); break;
-        case "horz-here": horzHere(); break;
-        case "vert-equal": vertEqual(); break;
-        case "vert-here": vertHere(); break;
+        function horzHere() {
+          // This is the active element of the right click (needed before the menu option was selected).
+          let el = window.activeElement;
+          // distance of the selected div from the top
+          let elY = el.getBoundingClientRect().top;
+          // height of the element to be divided
+          let elHeight = el.getBoundingClientRect().height;
+          // distance of the right click from the elements border. In other words it's relative position from within the element.
+          let newY = y - elY;
+          //calculates the height percentage of the top div
+          let cal = (newY / elHeight * 100);
+          //rounds the number out
+          let top = Math.round(cal);
+          //calculates the percentage of the top div
+          let bottom = (100 - top);
+          //concatenates percentage sign
+          top += "%";
+          bottom += "%"
+          //finally creates the 2 divs and adds the attributes to get the job done. Outline shows the border.
+          $(el).append("<div style='width:100%; height:" + top + "; outline: 1px solid red;'>");
+          $(el).append("<div style='width:100%; height:" + bottom + "; outline: 1px solid red;'>");
+        }
 
-      }
-      // function definition environment for each of the above cases
-      function horzEqual(){
-      // divides the div in half by top and bottom
-        $("div").append("<div></div>").append("<div></div>");
-        /*$("div").css({"height": "50%", "border-bottom": "var(--clr-dark) dotted 3px"});
-      */}
-
-      function horzHere(){
-        // result is the height of the top section
-        var result = $(".top").height();
-        /* divides the div in half by top and bottom where mouse was right clicked.
-        Also subtracts the top section height so it creates the div in the correct area */
-        $(".bottom").append("<div></div>").css({"height": y - result + "px", "border-bottom": "var(--clr-dark) dotted 3px"});    
-      };
-
-      function vertEqual(){
         // divides the div in half by left and right
-        $(".bottom").append("<div></div>").css({"width": "50%", "border-right": "var(--clr-dark) dotted 3px"});    
-      };
-      
-      function vertHere(){
-      // divides the div in half by left and right where mouse was right clicked.
-        $(".bottom").append("<div></div>").css({"width": x + "px", "border-right": "var(--clr-dark) dotted 3px"});    
-      };
+        function vertEqual() {
+          // This is the active element of the right click (needed before the menu option was selected).
+          let el = window.activeElement;
+          // Creates 2 div's with full height, equal width. Outline is there to make border visible. Inline block makes sure the div's don't overflow.
+          $(el).append("<div style='width:50%; height:100%; display:inline-block; outline: 1px solid red;'>");
+          $(el).append("<div style='width:50%; height:100%; display:inline-block; outline: 1px solid red;'>");
+        }
+        
 
-      // Hide it AFTER the action was triggered
-    $(".custom-menu").hide(100);
-    });
-    
+        // divides the div in half by left and right where mouse was right clicked.
+
+        function vertHere() {
+          // This is the active element of the right click (needed before the menu option was selected).
+          let el = window.activeElement;
+          // distance of the selected div from the left side 
+          let elX = el.getBoundingClientRect().left;
+          // gets width of the element to be divided
+          let elWidth = el.getBoundingClientRect().width;
+          // distance of the right click from the elements border. In other words it's relative position from within the element.
+          let newX = x - elX;
+          //calculates the width percentage of the left div
+          let cal = (newX / elWidth * 100);
+          //rounds the number out
+          let left = Math.round(cal);
+          //calculates the percentage of the right div
+          let right = (100 - left);
+          //concatenates percentage sign
+          left += "%";
+          right += "%"
+          //finally creates the 2 divs and adds the attributes to get the job done. Outline shows the border. Inline block makes sure the div's don't overflow.
+          $(el).append("<div style='width:" + left + "; height:100%; display:inline-block; outline: 1px solid red;'>");
+          $(el).append("<div style='width:" + right + "; height:100%; display:inline-block; outline: 1px solid red;'>");
+        }
+
+        // Hides context menu AFTER action was triggered
+        $(".custom-menu").hide(100);
+      });
+
     </script>
-
   </body>
-
 </html>
