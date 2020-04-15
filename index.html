@@ -12,8 +12,7 @@
   <body>
     <!--Top Section of Page. Button changes background color of section, shows visibility of div, and activates all of the div's functionality.-->
     <section class="top">
-      <button class="button">New Frame</button><br/>
-      <p></p>
+      <button class="button">New Frame</button>
     </section>
 
     <!--Bottom Section of Page that contains the main div.-->
@@ -25,13 +24,15 @@
           <li data-action="horz-here">Horizontal: Divide here</li>
           <li data-action="vert-equal">Vertical: Divide equally</li>
           <li data-action="vert-here">Vertical: Divide here</li>
-        </ul>
+          <li data-action="last-action">Undo Last Action</li>
+
+        </ul> 
       </div>
     </section>
 
     <script>
       
-      // Button triggers the bottom section to change background color, makes the main div visible.
+      // Button triggers the bottom section to change background color and makes the main div visible.
       $(".button").click(function() {
         $(".bottom-section").css("background-color", "#FFFFFF");
         $(".bottom").css("visibility", "visible");
@@ -40,6 +41,7 @@
       // Trigger action when the contexmenu is shown
       $(".bottom").bind("contextmenu", function(event) {
         window.activeElement = event.target;
+
         // prevents default context menu
         event.preventDefault();
 
@@ -71,6 +73,8 @@
 
       // If the context menu element is clicked
       $(".custom-menu li").click(function() {
+
+
         // There are multiple options
         switch ($(this).attr("data-action")) {
           //A case for each action will be executed by the specified function.
@@ -86,19 +90,28 @@
           case "vert-here":
             vertHere();
             break;
+          case "last-action":
+            lastAction();
+            break;
         }
+
+
         // function definition environment for each of the above cases / menu options.
         function horzEqual() {
           // This is the active element of the right click (needed before the menu option was selected).
-          let el = window.activeElement;
+          el = window.activeElement;
           // Creates 2 div's with full width, making it equal.  Outline is there to make border visible.
-          $(el).append("<div style='width:100%; height:50%; outline: 1px solid red;'>");
-          $(el).append("<div style='width:100%; height:50%; outline: 1px solid red;'>");
+          
+          let horzEqDiv = "<div style='width:100%; height:50%; outline: 1px solid red'>"
+
+          let a = $(el).append(horzEqDiv); $(el).append(horzEqDiv);
+
         }
+
 
         function horzHere() {
           // This is the active element of the right click (needed before the menu option was selected).
-          let el = window.activeElement;
+          el = window.activeElement;
           // distance of the selected div from the top
           let elY = el.getBoundingClientRect().top;
           // height of the element to be divided
@@ -122,18 +135,17 @@
         // divides the div in half by left and right
         function vertEqual() {
           // This is the active element of the right click (needed before the menu option was selected).
-          let el = window.activeElement;
+          el = window.activeElement;
           // Creates 2 div's with full height, equal width. Outline is there to make border visible. Inline block makes sure the div's don't overflow.
           $(el).append("<div style='width:50%; height:100%; display:inline-block; outline: 1px solid red;'>");
           $(el).append("<div style='width:50%; height:100%; display:inline-block; outline: 1px solid red;'>");
         }
         
-
         // divides the div in half by left and right where mouse was right clicked.
 
         function vertHere() {
           // This is the active element of the right click (needed before the menu option was selected).
-          let el = window.activeElement;
+          el = window.activeElement;
           // distance of the selected div from the left side 
           let elX = el.getBoundingClientRect().left;
           // gets width of the element to be divided
@@ -152,6 +164,16 @@
           //finally creates the 2 divs and adds the attributes to get the job done. Outline shows the border. Inline block makes sure the div's don't overflow.
           $(el).append("<div style='width:" + left + "; height:100%; display:inline-block; outline: 1px solid red;'>");
           $(el).append("<div style='width:" + right + "; height:100%; display:inline-block; outline: 1px solid red;'>");
+        }
+
+        window.elAr = [];
+        elAr.push(el);
+        console.log(elAr);
+
+        function lastAction() {
+          let bo = elAr[elAr.length - 1];
+          $(bo).children().remove();  
+
         }
 
         // Hides context menu AFTER action was triggered
